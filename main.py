@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 
 def detect_irregularities_by_shape(edges, circularity_threshold=0.8, min_contour_area=10, perimeter_threshold=50.0, area_threshold=0.0):
     regular_contours = []
@@ -66,27 +65,16 @@ def main(image_path='test.jpg', output_path='marked.jpg', circularity_threshold=
         print("Error: Could not load image.")
         return
 
-    # image = cv2.convertScaleAbs(image, alpha=(255/65535))
-
-    #enhanced_image = enhance_contrast(image)
-    
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Display the result
+    cv2.imshow("Grayscale result", gray)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     # Apply Gaussian blur
     # blur1 = cv2.GaussianBlur(gray, (1, 1), 1)
-    # blur2 = cv2.GaussianBlur(gray, (3, 3), 1)
-    # blur3 = cv2.GaussianBlur(gray, (5, 5), 1)
-    # blur4 = cv2.GaussianBlur(gray, (7, 7), 1)
 
-    # Global Threshold
-    #ret,th1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
-    #th2 = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY,11,2)
-    #th3 = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
-
-    # Otsu's thresholding
-    #ret4,th4 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
- 
     # Otsu's thresholding after Gaussian filtering
     # Only doing grayscale for now
     ret1,thresholded = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
@@ -95,31 +83,16 @@ def main(image_path='test.jpg', output_path='marked.jpg', circularity_threshold=
     cv2.imshow("Thresholded Result", thresholded)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    # ret2,th2 = cv2.threshold(blur1,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    # ret3,th3 = cv2.threshold(blur2,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    # ret4,th4 = cv2.threshold(blur3,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    # ret5,th5 = cv2.threshold(blur4,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-    # Histogram
-    #plt.hist(gray.ravel(),256,(0,256)); 
-
-    #bilateral_filtered = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
-    
-    
     # Apply Canny edge detection
     edges = cv2.Canny(thresholded, 20, 150)
     cv2.imshow("Edges", edges)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-        # Apply morphological opening to remove small noise
+    # Apply morphological opening to remove small noise
     kernel = np.ones((2, 2), np.uint8)
     edges = cv2.morphologyEx(edges, cv2.MORPH_OPEN, kernel)
-    
-    # edges2 = cv2.Canny(th2, 50, 150)
-    # edges3 = cv2.Canny(th3, 50, 150)
-    # edges4 = cv2.Canny(th4, 50, 150)
-    # edges5 = cv2.Canny(th5, 50, 150)
     
     # Detect irregularities based on circularity
     (regular_contours, 
@@ -153,15 +126,6 @@ def main(image_path='test.jpg', output_path='marked.jpg', circularity_threshold=
         print("No problematic contour detected.")
 
 
-    # Log the circularities
-    # print("Regular contours circularities:")
-    # for idx, circularity in enumerate(regular_circularities):
-    #     print(f"Contour {regular_indices[idx]}: {circularity:.2f}")
-
-    # print("\nIrregular contours circularities:")
-    # for idx, circularity in enumerate(irregular_circularities):
-    #     print(f"Contour {irregular_indices[idx]}: Circularity: {circularity:.3f}")
-
     for idx, _ in enumerate(irregular_contours):
         print(f"Irregular contour at Contour index: {irregular_contours[idx]}")
 
@@ -178,5 +142,5 @@ def main(image_path='test.jpg', output_path='marked.jpg', circularity_threshold=
     # Save the result
     cv2.imwrite(output_path, image)
 # Example usage with display scaling
-main(image_path='TestPythonWithMeCropped.TIF', output_path='FinishedTest.jpg', circularity_threshold=0.88, min_contour_area=10, perimeter_threshold=127.3, area_threshold=0.0)
+main(image_path='pics/Test_100MP.TIF', output_path='finished/100MP_Finished.jpg', circularity_threshold=0.88, min_contour_area=10, perimeter_threshold=127.3, area_threshold=0.0)
 
